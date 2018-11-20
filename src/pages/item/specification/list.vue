@@ -25,10 +25,18 @@
             <v-dialog v-model="dialog" max-width="500px">
               <v-btn slot="activator" color="primary" dark class="mb-2">新建</v-btn>
               <v-card>
-                <v-card-title>
-                  <span class="headline">{{isEditSpecGroup ? "编辑规格参数组" : "新建规格参数在组"}}</span>
-                </v-card-title>
-
+               <!-- <v-card-title>
+                  <span style="background-color: #409EFF" class="headline">{{isEditSpecGroup ? "编辑规格参数组" : "新建规格参数在组"}}</span>
+                </v-card-title>-->
+                <!--对话框的标题-->
+                <v-toolbar dense dark color="primary">
+                  <v-toolbar-title>{{isEditSpecGroup ? "编辑规格参数组" : "新建规格参数在组"}}</v-toolbar-title>
+                  <v-spacer/>
+                  <!--关闭窗口的按钮-->
+                  <v-btn icon @click="closeWindow">
+                    <v-icon>close</v-icon>
+                  </v-btn>
+                </v-toolbar>
                 <v-card-text>
                   <v-container grid-list-md>
                     <v-layout wrap>
@@ -101,6 +109,7 @@
             }
         },
         methods: {
+          closeWindow(){this.dialog = !this.dialog},
           initialize(){},
           submitSpecGroup(){
             if (this.currentNode.id == undefined || this.currentNode.id == null){
@@ -130,7 +139,7 @@
             if(this.dialog){
               if (this.currentNode.id == undefined || this.currentNode.id == null){
                 this.$message.error("请先选择新建规格组分类！");
-                this.dialog = false;
+                // this.dialog = false;
               }
             }
           }
