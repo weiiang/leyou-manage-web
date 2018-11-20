@@ -61,13 +61,26 @@
                     const {letter,categories, ...params} = this.brand;
                     params.letter = letter.toUpperCase();
                     params.cids = categories.map(e => e.id).join(",");
-                    this.$http.post("/item/brand", this.$qs.stringify(params)).then(res => {
+
+                    if(this.brand.id == undefined){ //新增
+                      this.$http.post("/item/brand", this.$qs.stringify(params)).then(res => {
                         this.closeWindow();
                         this.$message.success("保存成功!")
-                    }).catch(err => {
+                      }).catch(err => {
                         this.closeWindow();
                         this.$message.success("保存失败!")
-                    })
+                      })
+                    }else{//修改
+                      this.$http.put("/item/brand", this.$qs.stringify(params)).then(res => {
+                        this.closeWindow();
+                        this.$message.success("保存成功!")
+                      }).catch(err => {
+                        this.closeWindow();
+                        this.$message.success("保存失败!")
+                      })
+
+                    }
+
 
                 }
             },
