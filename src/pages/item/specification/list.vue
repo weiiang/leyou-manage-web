@@ -21,6 +21,8 @@
               vertical
             ></v-divider>
             <v-spacer></v-spacer>
+
+
             <v-dialog v-model="dialog" max-width="800px">
               <v-btn slot="activator" color="primary" dark class="mb-2">新建</v-btn>
               <v-card>
@@ -32,14 +34,71 @@
                     <v-icon>close</v-icon>
                   </v-btn>
                 </v-toolbar>
+
+
+                <!--新建表单-->
                 <v-card-text>
-                  <v-container grid-list-md>
-                    <v-layout wrap>
+                    <v-layout row wrap >
                       <v-flex xs12 sm12>
                         <v-text-field v-model="editedItem.name" label="分组名称" :rules="nameRules" required></v-text-field>
                       </v-flex>
+
+                      <v-flex xs12 sm12>
+                        <v-btn color="info" @click="addRow">新增行</v-btn>
+                      </v-flex>
+
+                      <div  v-for="(editedParam,index ) in editedParamList">
+                      <v-flex xs12 sm12>
+                        <v-layout row wrap>
+                        <v-flex xs2>
+                          <v-text-field v-model="editedParam.name" label="参数名称" :rules="nameRules" required></v-text-field>
+                        </v-flex>
+
+                        <v-flex xs1>
+                          <v-select
+                            v-model = "editedParam.isNumeric"
+                            @change = "selectChange($event, index)"
+                            :items="judgeList"
+                            label="数值型"
+                          ></v-select>
+                        </v-flex>
+
+                          <v-flex xs2>
+                            <v-text-field :disabled="editedParam.disbaledUnit" v-model="editedParam.unit" label="单位"></v-text-field>
+                          </v-flex>
+
+                          <v-flex xs1>
+                            <v-select
+                              v-model = "editedParam.isgeneric"
+                              :items="judgeList"
+                              label="通用属性"
+                              @change = "selectGenericChange($event, index)"
+                            ></v-select>
+                          </v-flex>
+
+                          <v-flex xs1>
+                            <v-select
+                              v-model = "editedParam.isSearching"
+                              :items="judgeList"
+                              label="搜素属性"
+                              @change = "selectSearchingChange($event, index)"
+                            ></v-select>
+                          </v-flex>
+
+                          <v-flex xs3 >
+                            <v-text-field :disabled="editedParam.disbaledSearching" v-model="editedParam.segments" label="搜索值"></v-text-field>
+                          </v-flex>
+
+                          <v-flex xs2 sm2>
+                            <div>
+                              <v-btn color="error" @click="removeCurrentRow(index, editedParam)">移除行</v-btn>
+                            </div>
+                          </v-flex>
+                        </v-layout>
+
+                      </v-flex>
+                      </div>
                     </v-layout>
-                  </v-container>
                 </v-card-text>
 
                 <v-card-actions>
@@ -155,6 +214,26 @@
             return {
               currentNode: {},
               isEditSpecGroup: false, //默认为新建
+              editedParam:{}, //规格参数
+              disbaledUnit:false,
+              specGroupId: "", //规格组ID
+              editedParamList: [
+                //{
+                //  cid:this.currentNode.id,
+                //  groupId:"",
+                //  name:"",
+                //  numeric: true,
+                //  unit:"",
+                //  generic: true,
+                //  searching:true,
+                //  segments:"",
+                //  disbaledUnit: false,
+                //  disbaledSearching: false,
+                //}
+              ],//规格参数列表
+              showSegments:"", //是否显示搜索属性值
+              judgeList: ["是","否"], //是否的下拉框
+
               nameRules: [
                 v => !!v || "规格分钟名称不能为空",
                 // v => v.length > 1 || "品牌名称至少2位"
@@ -187,6 +266,7 @@
                 { text: '搜索条件',align: 'center', value: 'segments' },
                 { text: '操作', align: 'center', value: 'name', sortable: false }
               ],
+
               editedItem: {},
               defaultItem: {},
 
@@ -196,6 +276,55 @@
             }
         },
         methods: {
+          addRow(){
+
+            let editParam =  {
+              cid:this.currentNode.id,
+              groupId: this.specGroupId,
+              name:"",
+              numeric: true,
+              unit:"",
+              generic: true,
+              searching:true,
+              segments:"",
+              disbaledUnit: false,
+              disbaledSearching: false,
+              isNumeric: "是",
+              isgeneric: "是",
+              isSearching: "是",
+            };
+            this.editedParamList.push(editParam);
+          },
+          removeCurrentRow(editedParam,index){
+            this.editedParamList.splice(index, 1);
+          },
+          selectChange(data, index){
+            if (data == "是"){
+              this.editedParamList[index].disbaledUnit = false;
+              this.editedParamList[index].numeric = true;
+            }else if(data = "否"){
+              this.editedParamList[index].disbaledUnit = true;
+              this.editedParamList[index].numeric = false;
+            }
+          },
+
+          selectGenericChange(data, index){
+            if (data == "是"){
+              this.editedParamList[index].generic = true;
+            }else if(data = "否"){
+              this.editedParamList[index].generic = false;
+            }
+          },
+
+          selectSearchingChange(data, index){
+            if (data == "是"){
+              this.editedParamList[index].disbaledSearching = false;
+              this.editedParamList[index].searching = true;
+            }else if(data = "否"){
+              this.editedParamList[index].disbaledSearching = true;
+              this.editedParamList[index].searching = false;
+            }
+          },
           //返回显示规格组
           backToGroup(){
             this.showGroup = true;
@@ -203,6 +332,7 @@
 
           //点击规格组显示规格参数
           showSpecParam(specGroupId){
+            this.specGroupId = specGroupId;
               this.$http.get("/item/spec-param/"+specGroupId).then(res =>{
                   this.specParamList = res.data;
                   this.showGroup = false;
@@ -218,6 +348,13 @@
             let params = {};
             params.cid = this.currentNode.id;
             params.name = this.editedItem.name;
+
+            提交规格组新增数据
+
+            提交规格组新增后返回的ID设置groupId的数据
+
+            alert(JSON.stringify(this.editedParamList))
+
 
           },
           editSpec(item){
@@ -240,6 +377,16 @@
           },
         },
       watch:{
+        editedParam:{
+          deep: true,
+          handler(){
+            if(this.editedParam.searching){
+              this.showSegments = true;
+            }else{
+              this.showSegments = false;
+            }
+          }
+        },
         dialog:{
           handler(){
             if(this.dialog){
