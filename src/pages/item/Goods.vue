@@ -157,9 +157,10 @@
         if (this.step === 4) {
           return;
         }
-        if (this.$refs.goodsForm.$refs.basic.validate()) {
-          this.step++;
-        }
+        this.step++;
+        //if (this.$refs.goodsForm.$refs.basic.validate()) {
+        //  this.step++;
+        //}
       },
       addItem() {
         this.selectedGoods = null;

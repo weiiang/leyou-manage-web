@@ -134,6 +134,9 @@
           this.menuMap[p1][i.path.slice(1)] = i.title;
         })
       })
+    },
+
+    mounted(){
     }
   }
 </script>
