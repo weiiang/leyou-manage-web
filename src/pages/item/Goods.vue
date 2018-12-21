@@ -137,6 +137,52 @@
       }
     },
     mounted() {
+      let a = [{"name":"内存", "value":["4G","8G","16G"]}, {name:"颜色", value:["白色", "金色"]}, {name:"重量",value:["100g", "200g"]}];
+      a.forEach(e =>{
+        e.value.forEach(v =>{
+
+        })
+      })
+
+
+
+
+
+
+      let b = [];
+      let c = [];
+      let d = [];
+      a.forEach(m =>{
+        b.forEach(n =>{
+          c.forEach(p =>{
+            d.push(a=m+"-"+n+"-"+p)
+          })
+        })
+      })
+
+      alert(JSON.stringify(d))
+      alert(d.length)
+
+
+      let list = [
+        {id: "12", name: "张三", value:"zhangsan"},
+        {id: "22", name: "李四", value:"lisi"},
+        {id: "32", name: "王五", value:"wangwu"},
+        {id: "42", name: "赵六", value:"zhaoliu"},
+      ];
+
+      let arr = [];
+      list.forEach(l =>{
+        let p = {};
+        let a = l.id;
+        p[l.id] = l.value;
+        arr.push(p);
+      })
+
+
+
+
+
       this.getDataFromApi();
     },
     methods: {

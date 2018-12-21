@@ -35,15 +35,17 @@
 
       </v-stepper-content>
 
+      <!--商品描述-->
       <v-stepper-content step="2">
 
         <quill-editor style=" height:460px" v-model="goods.spuDetail.description" :options="editorOption"/>
 
       </v-stepper-content>
 
+      <!--规格参数-->
       <v-stepper-content step="3">
 
-        <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
+
 
       </v-stepper-content>
 
@@ -96,9 +98,18 @@
           handler(){
             this.goods.brandId == null;
             let cid = this.goods.categories[2].id;
+            //根据分类加载品牌
             this.$http.get("/item/brand/list-by-cid/"+cid).then(res =>{
               this.brandOptions = res.data;
             });
+            //根据分类加载规格参数
+            this.$http.get("/item/spec-param/list-by-param",{
+              params:{
+                cid: cid,
+              }
+            }).then(res =>{
+              alert(JSON.stringify(res))
+            })
           },
         }
       },

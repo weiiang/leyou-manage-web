@@ -17,7 +17,7 @@
             <v-form v-model="valid" ref="basic">
               <v-layout row>
                 <v-flex xs5>
-                  <v-cascader url="/item/category/list" v-model="goods.categories"
+                  <v-cascader url="/item/category" v-model="goods.categories"
                               required show-all-levels label="商品分类"/>
                 </v-flex>
                 <v-flex offset-xs2 xs5>
@@ -319,12 +319,12 @@
         deep: true,
         handler(val) {
           // 根据分类加载品牌信息
-          this.$http.get("/item/brand/cid/" + val[2].id)
+          this.$http.get("/item/brand/list-by-cid/" + val[2].id)
             .then(resp => {
               this.brandOptions = resp.data;
             })
           // 根据分类加载规格参数
-          this.$http.get("/item/spec/" + val[2].id)
+          this.$http.get("/item/spec-param/list-by-param",{params:{cid: val[2].id}})
             .then(resp => {
               this.specifications = resp.data;
               this.template = [];
